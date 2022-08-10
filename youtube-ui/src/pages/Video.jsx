@@ -4,10 +4,11 @@ import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutl
 import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import AddTaskOutlinedIcon from "@mui/icons-material/AddTaskOutlined";
 import Comments from "../components/Comments";
+import Card from "../components/Card";
 
 const Container = styled.div`
   display: flex;
-  gap: 24;
+  gap: 24px;
 `;
 
 const Content = styled.div`
@@ -103,9 +104,9 @@ const Description = styled.p`
   font-size: 14px;
 `;
 
-const Video = () => {
+const Video = ({ type }) => {
   return (
-    <Container>
+    <Container type={type}>
       <Content>
         <VideoWrapper>
           <iframe
@@ -156,7 +157,24 @@ const Video = () => {
         <Hr />
         <Comments />
       </Content>
-      <Recommendation>recommedation</Recommendation>
+      <Recommendation>
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+      </Recommendation>
     </Container>
   );
 };
