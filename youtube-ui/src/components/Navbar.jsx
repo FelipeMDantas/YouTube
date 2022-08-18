@@ -82,7 +82,6 @@ const Navbar = () => {
           <User>
             <VideoCallOutlined />
             <Avatar src={currentUser.img} />
-            {console.log(currentUser.img)}
             {currentUser.name}
           </User>
         ) : (

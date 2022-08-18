@@ -7,6 +7,10 @@ import Comments from "../components/Comments";
 import Card from "../components/Card";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { fetchSuccess } from "../redux/videoSlice";
+import { format } from "timeago.js";
 
 const Container = styled.div`
   display: flex;
@@ -106,15 +110,39 @@ const Description = styled.p`
   font-size: 14px;
 `;
 
-const Video = ({ type }) => {
+const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
+  const { currentVideo } = useSelector((state) => state.video);
   const dispatch = useDispatch();
-  const path = useLocation();
 
-  console.log(path);
+  const path = useLocation().pathname.split("/")[2];
+
+  const [channel, setChannel] = useState({});
+
+  useEffect(() => {
+    console.log("TEEEEEEEEEEEEEEEEEEEEEEEEST");
+    const fetchData = async () => {
+      try {
+        const videoRes = await axios.get(`/videos/find/${path}`);
+        //console.log(videoRes);
+        const channelRes = await axios.get(`/users/find/${videoRes.userId}`);
+
+        setChannel(channelRes.data);
+        dispatch(fetchSuccess(videoRes.data));
+      } catch (err) {}
+    };
+    fetchData();
+
+    // axios.get(`/videos/find/${path}`).then((res) => {
+    //   dispatch(fetchSuccess(res.data));
+    //   axios.get(`/users/find/${res.data.userId}`).then((res) => {
+    //     setChannel(res.data);
+    //   });
+    // });
+  }, [path, dispatch]);
 
   return (
-    <Container type={type}>
+    <Container>
       <Content>
         <VideoWrapper>
           <iframe
@@ -126,13 +154,15 @@ const Video = ({ type }) => {
             allowFullScreen
           ></iframe>
         </VideoWrapper>
-        <Title>Test Video</Title>
+        <Title>{currentVideo.title}</Title>
         <Details>
-          <Info>15,000 views • Aug 08, 2022</Info>
+          <Info>
+            {currentVideo.views} views • {format(currentVideo.createdAt)}
+          </Info>
           <Buttons>
             <Button>
               <ThumbUpOutlinedIcon />
-              132
+              {currentVideo.likes?.length}
             </Button>
             <Button>
               <ThumbDownOffAltOutlinedIcon /> Dislike
@@ -148,16 +178,11 @@ const Video = ({ type }) => {
         <Hr />
         <Channel>
           <ChannelInfo>
-            <Image src="https://avatars.githubusercontent.com/u/69874910?v=4" />
+            <Image src={channel.img} />
             <ChannelDetail>
-              <ChannelName>Felipe Dantas</ChannelName>
-              <ChannelCounter>1,000,000 subscribers</ChannelCounter>
-              <Description>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
-              </Description>
+              <ChannelName>{channel.res}</ChannelName>
+              <ChannelCounter>{channel.subscribers} subscribers</ChannelCounter>
+              <Description>{currentVideo.desc}</Description>
             </ChannelDetail>
           </ChannelInfo>
           <Subscribe>SUBSCRIBE</Subscribe>
@@ -165,7 +190,7 @@ const Video = ({ type }) => {
         <Hr />
         <Comments />
       </Content>
-      <Recommendation>
+      {/* <Recommendation>
         <Card type="sm" />
         <Card type="sm" />
         <Card type="sm" />
@@ -182,7 +207,7 @@ const Video = ({ type }) => {
         <Card type="sm" />
         <Card type="sm" />
         <Card type="sm" />
-      </Recommendation>
+      </Recommendation> */}
     </Container>
   );
 };
