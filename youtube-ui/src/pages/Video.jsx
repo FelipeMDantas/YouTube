@@ -5,6 +5,8 @@ import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import AddTaskOutlinedIcon from "@mui/icons-material/AddTaskOutlined";
 import Comments from "../components/Comments";
 import Card from "../components/Card";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -105,6 +107,12 @@ const Description = styled.p`
 `;
 
 const Video = ({ type }) => {
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const path = useLocation();
+
+  console.log(path);
+
   return (
     <Container type={type}>
       <Content>
