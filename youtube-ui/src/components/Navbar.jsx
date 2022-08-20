@@ -81,7 +81,7 @@ const Navbar = () => {
         {currentUser ? (
           <User>
             <VideoCallOutlined />
-            <Avatar src={currentUser.img} />
+            <Avatar src={currentUser.img} referrerPolicy="no-referrer" />
             {currentUser.name}
           </User>
         ) : (
