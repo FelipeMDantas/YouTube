@@ -7,6 +7,8 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import app from "../firebase";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Container = styled.div`
   width: 100%;
@@ -18,6 +20,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1;
 `;
 
 const Wrapper = styled.div`
@@ -80,6 +83,8 @@ const Upload = ({ setOpen }) => {
   const [inputs, setInputs] = useState({});
   const [tags, setTags] = useState([]);
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     setInputs((prev) => {
       return { ...prev, [e.target.name]: e.target.value };
@@ -101,7 +106,9 @@ const Upload = ({ setOpen }) => {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        urlType === "imgUrl" ? setImgPerc(progress) : setVideoPerc(progress);
+        urlType === "imgUrl"
+          ? setImgPerc(Math.round(progress))
+          : setVideoPerc(Math.round(progress));
         switch (snapshot.state) {
           case "paused":
             console.log("Upload is paused");
@@ -125,12 +132,20 @@ const Upload = ({ setOpen }) => {
   };
 
   useEffect(() => {
-    videoPerc && uploadFile(video, "videoUrl");
+    video && uploadFile(video, "videoUrl");
   }, [video]);
 
   useEffect(() => {
-    imgPerc && uploadFile(img, "imgUrl");
+    img && uploadFile(img, "imgUrl");
   }, [img]);
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+
+    const res = await axios.post("/videos", { ...inputs, tags });
+    setOpen(false);
+    res.status === 200 && navigate(`/video/${res.data._id}`);
+  };
 
   return (
     <Container>
@@ -175,7 +190,7 @@ const Upload = ({ setOpen }) => {
             onChange={(e) => setImg(e.target.files[0])}
           />
         )}
-        <Button>Upload</Button>
+        <Button onClick={handleUpload}>Upload</Button>
       </Wrapper>
     </Container>
   );
